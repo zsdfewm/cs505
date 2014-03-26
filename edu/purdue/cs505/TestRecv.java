@@ -6,7 +6,7 @@ public class TestRecv{
     recver.init("localhost",9876);
     recver.rlisten(null);
     try{
-      Thread.sleep(10000);
+      Thread.sleep(30000);
     }
     catch(Exception e){
       e.printStackTrace();
