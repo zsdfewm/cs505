@@ -45,7 +45,7 @@ public class ChannelReceiver implements ReliableChannelReceiver, Runnable{
   }
 
   public void rreceive(Message m){
-//   System.out.println(myName+" recv message length: "+m.getMessageContents().length());
+   System.out.println(m.getMessageContents());
   }
   public void breceive(byte[] data){
 //randomly drop packages;
