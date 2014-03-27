@@ -12,6 +12,7 @@ public class ChannelReceiver implements ReliableChannelReceiver, Runnable{
   public DatagramSocket socket;
   public Random rand;
   public boolean workFlag;
+  public int count=0;
   public ChannelReceiver(String myName, int listenPort, SenderBuffer senderBuffer){
     this.myName=myName;
     this.listenPort=listenPort;
@@ -45,7 +46,13 @@ public class ChannelReceiver implements ReliableChannelReceiver, Runnable{
   }
 
   public void rreceive(Message m){
-   System.out.println(m.getMessageContents());
+   System.out.println(count+" : "+m.getMessageContents());
+   int check=Integer.parseInt(m.getMessageContents());
+   if (check!=count){
+     System.out.println("Error:");
+     System.exit(-1);
+   }
+   count++;
   }
   public void breceive(byte[] data){
 //randomly drop packages;

@@ -8,7 +8,7 @@ import java.util.*;
 //confirmed_index, waiting for the confirmed
 
 public class SenderBuffer{
-  public static final int SENDING_BUFFER_SIZE=20000;
+  public static final int SENDING_BUFFER_SIZE=200000;
   public static final int SENDING_WINDOW_SIZE=2000;
   public String myName;
   public SortedMap<Integer, MessageWrapper> buffer;
