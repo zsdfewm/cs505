@@ -33,7 +33,7 @@ public class Channel implements ReliableChannel{
     crecver.init();
     new Thread(crecver).start();
   } 
-  public void rsend(Message m){
+  public void rsend(ChannelMessage m){
     try{
       csender.sendString(m.getMessageContents());
     }

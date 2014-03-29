@@ -1,7 +1,7 @@
 package edu.purdue.cs505;
 
 
-public class MessageWrapper implements Message{
+public class MessageWrapper implements ChannelMessage{
   public String s;
   public int index;
   public boolean packed;
