@@ -3,8 +3,9 @@ package edu.purdue.cs505;
 import java.net.*;
 import java.util.*;
 
-public class ChannelReceiver implements ReliableChannelReceiver, Runnable{
+public class ChannelReceiver implements Runnable{
   byte[] recvData;
+  public ReliableChannelReceiver callBackReceiver;
   public int latest_index;
   public String myName;
   public int listenPort;
@@ -12,13 +13,13 @@ public class ChannelReceiver implements ReliableChannelReceiver, Runnable{
   public DatagramSocket socket;
   public Random rand;
   public boolean workFlag;
-  public int count=0;
   public ChannelReceiver(String myName, int listenPort, SenderBuffer senderBuffer){
     this.myName=myName;
     this.listenPort=listenPort;
     this.senderBuffer=senderBuffer;
     this.latest_index=-1;
     rand=new Random(12345);
+    this.callBackReceiver=null;
   }
   public void init(){
     recvData=new byte[DataWrapper.UDP_DATA_SIZE];
@@ -44,7 +45,7 @@ public class ChannelReceiver implements ReliableChannelReceiver, Runnable{
     }
     return false;
   }
-
+/*
   public void rreceive(Message m){
    System.out.println(count+" : "+m.getMessageContents());
    int check=Integer.parseInt(m.getMessageContents());
@@ -54,15 +55,15 @@ public class ChannelReceiver implements ReliableChannelReceiver, Runnable{
    }
    count++;
   }
+*/
   public void breceive(byte[] data){
-//randomly drop packages;
-/*
+//randomly drop packages;*
     double drop=rand.nextDouble();
-    if (drop>0.99){
+    if (drop>0.90){
       System.out.println("Drops");
       return;
     }
-*/
+
     DataWrapper dataWrapper=new DataWrapper(data);
 //    System.out.println(myName+" recv: "+this.latest_index+" length:"+dataWrapper.getLength());
 //    dataWrapper.printData();
@@ -76,7 +77,9 @@ public class ChannelReceiver implements ReliableChannelReceiver, Runnable{
       if (this.acceptMessages(mArray)){  //Accept all Messages
         senderBuffer.addACKJob(mArray[mArray.length-1].getIndex());
 	for(int i=0;i<mArray.length;i++){
-          this.rreceive(mArray[i]);
+          if (this.callBackReceiver!=null){
+            this.callBackReceiver.rreceive(mArray[i]);
+          }
         }
       }
       else{//skipped message, resend ACK;

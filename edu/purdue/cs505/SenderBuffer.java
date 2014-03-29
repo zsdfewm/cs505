@@ -9,7 +9,7 @@ import java.util.*;
 
 public class SenderBuffer{
   public static final int SENDING_BUFFER_SIZE=200000;
-  public static final int SENDING_WINDOW_SIZE=2000;
+  public static final int SENDING_WINDOW_SIZE=200;
   public String myName;
   public SortedMap<Integer, MessageWrapper> buffer;
   public int latest_index;
@@ -35,7 +35,7 @@ public class SenderBuffer{
       this.confirmed_index++;
       buffer.remove(i);
     }
-    System.out.println(myName+" confirmed: "+ confirmed_index+" size="+buffer.size());
+//    System.out.println(myName+" confirmed: "+ confirmed_index+" size="+buffer.size());
     if (sended_index<this.confirmed_index){
       sended_index=this.confirmed_index;
     }
@@ -61,8 +61,20 @@ public class SenderBuffer{
       sended_index=confirmed_index;
     }
     if (sended_index<latest_index){
-      int packedSize=0;
+//      int packedSize=0;
       m=buffer.get(sended_index+1);
+      sended_index=sended_index+1;
+      if (m.isPacked()){
+        data=m.getDataWrapper();
+      }
+      else{
+        data=new DataWrapper(m);
+        m.setDataWrapper(data);
+        m.setPackedSize(1);
+      }
+
+//no packing for HW2, ruin the timing
+/*
       if (m.isPacked()){
 //	System.out.printf("Used packed for [%d]..[%d]\n",sended_index+1,sended_index+m.getPackedSize());
         data=m.getDataWrapper();
@@ -86,6 +98,7 @@ public class SenderBuffer{
 	m.setDataWrapper(data);
 	m.setPackedSize(packedSize);
       }
+*/
     }
     if (pending_ack_index!=-1){
       if (data==null){

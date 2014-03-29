@@ -4,7 +4,7 @@ package edu.purdue.cs505;
 //import java.net.*;
 //import java.lang.*;
 
-public class Channel implements ReliableChannel, Runnable{
+public class Channel implements ReliableChannel{
   public ChannelReceiver crecver;
   public ChannelSender csender;
   public UDPSender usender;
@@ -30,6 +30,8 @@ public class Channel implements ReliableChannel, Runnable{
     crecver=new ChannelReceiver(this.myName, this.listenPort, senderBuffer);
     csender=new ChannelSender(this.myName, this.targetIP, this.targetPort, senderBuffer);
     csender.begin();
+    crecver.init();
+    new Thread(crecver).start();
   } 
   public void rsend(Message m){
     try{
@@ -40,37 +42,12 @@ public class Channel implements ReliableChannel, Runnable{
     }
   }
   public void rlisten(ReliableChannelReceiver rc){
-    crecver.init();
-    new Thread(crecver).start();
+//    crecver.init();
+//    new Thread(crecver).start();
+    crecver.callBackReceiver=rc;
   }
   public void halt(){
     csender.halt();
     crecver.halt();
-  }
-  public void run(){
-    this.init(this.targetIP,this.targetPort);
-    this.rlisten(crecver);
-    String s;
-    for(int i=0;i<100000;i++){
-      s="";
-      for(int j=0;j<50;j++){
-        s=s+'A';
-      }
-      this.rsend(new MessageWrapper(s));
-    }
-try{
-      Thread.sleep(10000);
-//      this.halt();
-}
-catch(Exception e){
-  e.printStackTrace();
-}
-  }
-  public static void main(String args[]){
-    System.out.println("Everything begins here");
-    Channel node1=new Channel("node1",9876,"localhost",9877);
-    Channel node2=new Channel("node2",9877,"localhost",9876);
-    new Thread(node1).start();
-    new Thread(node2).start();
   }
 }
