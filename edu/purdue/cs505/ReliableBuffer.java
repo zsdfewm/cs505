@@ -9,7 +9,7 @@ import java.util.*;
 
 public class ReliableBuffer{
   public static final int SENDING_BUFFER_SIZE=20000;
-  public static final int SENDING_WINDOW_SIZE=10;
+  public static final int SENDING_WINDOW_SIZE=100;
   public String myID;
   public String destID;
   public SortedMap<Integer, DataWrapper> buffer;
@@ -42,12 +42,12 @@ public class ReliableBuffer{
   public synchronized void confirmed(int confirmed_index){
     if (confirmed_index==this.confirmed_index){
       //reconfirmed means lost packet. resend the request packet;
-      System.out.printf("resend [%d] confirmed[%d] this.confirmed[%d] buffered[%d]\n",sended_index, confirmed_index, this.confirmed_index, latest_index);
+//      System.out.printf("resend [%d] confirmed[%d] this.confirmed[%d] buffered[%d]\n",sended_index, confirmed_index, this.confirmed_index, latest_index);
       sended_index=confirmed_index;
       return;
     }
     if (confirmed_index>this.confirmed_index){
-      System.out.println(myID+" confirmed: "+ confirmed_index+" size="+buffer.size());
+//      System.out.println(myID+"@"+destID+" confirmed: "+ confirmed_index+" size="+buffer.size());
       for(int i=this.confirmed_index+1;i<=confirmed_index;i++){
         buffer.remove(i);
         this.confirmed_index++;

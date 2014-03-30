@@ -35,13 +35,13 @@ public class ChannelReceiver implements Runnable{
   }
   public void breceive(byte[] data){
 //randomly drop packages;*
-    
+/*    
     double drop=rand.nextDouble();
     if (drop>0.90){
       System.out.println("Drops");
       return;
     }
-
+*/
 
     DataWrapper dataWrapper=new DataWrapper(data);
 //    dataWrapper.printData();

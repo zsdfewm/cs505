@@ -20,9 +20,14 @@ public class ChannelSender{
     MessageWrapper m=new MessageWrapper(s);
     this.sendMessageWrapper(destID,m);
   }
-  public void sendMessage(String destID, Message m) throws SenderBufferOverflowException{
+  public void sendMessage(String destID, Message m){
+try{
     MessageWrapper mw=new MessageWrapper(m.toString());
     this.sendMessageWrapper(destID,mw);
+}
+catch(Exception e){
+  e.printStackTrace();
+}
   }
 }
 
