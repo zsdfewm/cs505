@@ -2,7 +2,7 @@ package edu.purdue.cs505;
 
 import java.util.*;
 
-public class Broadcast implements ReliableBroadcast{
+public class Broadcast implements FIFOReliableBroadcast{
   public int messageNumber;
   public Process myProc;
   public String myID;
