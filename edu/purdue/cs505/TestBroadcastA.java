@@ -2,7 +2,7 @@ package edu.purdue.cs505;
 
 public class TestBroadcastA{
   public static void main(String args[]){
-    Broadcast bc=new Broadcast();
+    ReliableBroadcast bc=new Broadcast();
     Process p0=new Process("localhost", 9876);
     Process p1=new Process("localhost", 9877);
     Process p2=new Process("localhost", 9878);
