@@ -46,6 +46,7 @@ public class FIFOBroadcast extends Broadcast {
       SRBReliableBroadcastReceiver srbr=new SRBReliableBroadcastReceiver(myID, sender, br, channelMap,FIFOBroadcast.deliveryDelay);
       this.rbr=srbr;
       recver.rlisten(srbr);
+      new Thread(srbr).start();
     }
   }
 }

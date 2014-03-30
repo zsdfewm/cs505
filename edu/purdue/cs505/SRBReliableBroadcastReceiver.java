@@ -5,15 +5,17 @@ import java.util.*;
 //For SRB, indexMap extends to contain my self. 
 
 
-public class SRBReliableBroadcastReceiver extends ReliableBroadcastReceiver{
+public class SRBReliableBroadcastReceiver extends ReliableBroadcastReceiver implements Runnable{
   public long delay;
   public String myID;
   public BroadcastReceiver br;
   public ChannelSender sender;
   public HashMap<String, TreeMap<Integer,Message>> indexMap;
   public HashMap<String, HashSet<Integer>> savedMap;
+
   public SRBReliableBroadcastReceiver(String myID, ChannelSender sender, BroadcastReceiver br, HashMap<String, ReliableBuffer> map, long delay){
     indexMap=new HashMap<String, TreeMap<Integer, Message>>();
+    savedMap=new HashMap<String, HashSet<Integer>>();
     Set<String> procIDs=map.keySet();
     Iterator iter = procIDs.iterator();
     String procID;
@@ -95,10 +97,13 @@ System.out.println(myID+" delivers: "+m.getContents()+"<<from"+m.getProcessID()+
     while(iter.hasNext()){
       procID=iter.next();
       messageBag=indexMap.get(procID);
-      m=messageBag.get(messageBag.firstKey());
-      if (m.getTimeStamp()+delay<ts){
-        this.rdeliver(m);
-        messageBag.remove(messageBag.firstKey());
+      if (messageBag.size()>0) {
+        m=messageBag.get(messageBag.firstKey());
+//  System.out.println(m.getContents()+":"+m.getTimeStamp()+"@"+ts);
+        if (m.getTimeStamp()+delay<ts){
+          this.rdeliver(m);
+          messageBag.remove(messageBag.firstKey());
+        }
       }
     }
   }

@@ -39,7 +39,7 @@ public class Message{
       for(int i=0;i<killList.size();i++){
         retval=retval+" "+killList.elementAt(i);
       }
-System.out.println(retval);
+//System.out.println(retval);
     }
     return retval;
   }
