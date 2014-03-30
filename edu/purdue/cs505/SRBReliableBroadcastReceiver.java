@@ -40,7 +40,7 @@ public class SRBReliableBroadcastReceiver extends ReliableBroadcastReceiver impl
   public void rreceive(ChannelMessage mw){
     Message m;
     m=new Message(mw.getMessageContents());
-System.out.println(mw.getMessageContents());
+//System.out.println(mw.getMessageContents());
     this.breceive(m);
   }
   public synchronized void addMessage(TreeMap<Integer, Message> map, int index, Message m){
@@ -85,7 +85,7 @@ System.out.println(mw.getMessageContents());
 if (this.br!=null){
   br.rdeliver(m);
 }
-System.out.println(myID+" delivers: "+m.getContents()+"<<from"+m.getProcessID()+"@"+m.getMessageNumber());
+//System.out.println(myID+" delivers: "+m.getContents()+"<<from"+m.getProcessID()+"@"+m.getMessageNumber());
   }
 
   public synchronized void fetchRound(long ts){

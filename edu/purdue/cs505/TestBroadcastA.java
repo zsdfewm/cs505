@@ -14,7 +14,7 @@ public class TestBroadcastA{
     bc.rblisten(null);
 try{
     Thread.sleep(1000);
-    int n=10;
+    int n=100;
     int nn=10;
     Message m;
     for(int i=0;i<n;i++){
