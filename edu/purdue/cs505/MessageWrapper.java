@@ -6,7 +6,6 @@ public class MessageWrapper implements ChannelMessage{
   public int index;
   public boolean packed;
   public DataWrapper dataWrapper;
-  public int packedSize;
   public MessageWrapper(String s){
     this.packed=false;
     this.s=s;
@@ -38,18 +37,15 @@ public class MessageWrapper implements ChannelMessage{
   public boolean isPacked(){
     return this.packed;
   }
+  public void setPacked(){
+    this.packed=true;
+  }
   public void setDataWrapper(DataWrapper dataWrapper){
     this.packed=true;
     this.dataWrapper=dataWrapper;
   }
   public DataWrapper getDataWrapper(){
     return this.dataWrapper;
-  }
-  public void setPackedSize(int size){
-    this.packedSize=size;
-  }
-  public int getPackedSize(){
-    return this.packedSize;
   }
 //Util for test;
   public static MessageWrapper getMsgFromString(String s){

@@ -38,48 +38,30 @@ public class ChannelReceiver implements Runnable{
     }    
     return false;
   }
-  public boolean acceptMessages(MessageWrapper[] mArray){
-    if (latest_index+1==mArray[0].getIndex()){
-      latest_index+=mArray.length;
-      return true;
-    }
-    return false;
-  }
-/*
-  public void rreceive(Message m){
-   System.out.println(count+" : "+m.getMessageContents());
-   int check=Integer.parseInt(m.getMessageContents());
-   if (check!=count){
-     System.out.println("Error:");
-     System.exit(-1);
-   }
-   count++;
-  }
-*/
+
   public void breceive(byte[] data){
 //randomly drop packages;*
+/*    
     double drop=rand.nextDouble();
     if (drop>0.90){
       System.out.println("Drops");
       return;
     }
+*/
 
     DataWrapper dataWrapper=new DataWrapper(data);
-//    System.out.println(myName+" recv: "+this.latest_index+" length:"+dataWrapper.getLength());
-//    dataWrapper.printData();
     int ACKindex=dataWrapper.getACK();
     if (ACKindex!=-1){
       senderBuffer.confirmed(ACKindex);
+      return;
     }
-    if (dataWrapper.hasMessage()){
-      MessageWrapper[] mArray;
-      mArray=dataWrapper.extractMessage();
-      if (this.acceptMessages(mArray)){  //Accept all Messages
-        senderBuffer.addACKJob(mArray[mArray.length-1].getIndex());
-	for(int i=0;i<mArray.length;i++){
-          if (this.callBackReceiver!=null){
-            this.callBackReceiver.rreceive(mArray[i]);
-          }
+//Else there must be a message
+    mArray=dataWrapper.getMessage();
+    if (this.acceptMessages(mArray)){  //Accept all Messages
+      senderBuffer.addACKJob(mArray[mArray.length-1].getIndex());
+      for(int i=0;i<mArray.length;i++){
+        if (this.callBackReceiver!=null){
+          this.callBackReceiver.rreceive(mArray[i]);
         }
       }
       else{//skipped message, resend ACK;
@@ -87,6 +69,7 @@ public class ChannelReceiver implements Runnable{
       }
     }
   }
+
   public void run(){
     this.workFlag=true;
     while(workFlag){

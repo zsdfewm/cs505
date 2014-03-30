@@ -11,17 +11,16 @@ public class SenderBuffer{
   public static final int SENDING_BUFFER_SIZE=200000;
   public static final int SENDING_WINDOW_SIZE=200;
   public String myName;
-  public SortedMap<Integer, MessageWrapper> buffer;
+  public SortedMap<Integer, DataWrapper> buffer;
+  public HashMap<String, Integer> ackMap;
   public int latest_index;
-  public int pending_ack_index;
   public int sended_index;
   public int confirmed_index;
   public SenderBuffer(String myName){
     this.myName=myName;
-    buffer=new TreeMap<Integer, MessageWrapper>();
+    buffer=new TreeMap<Integer, DataWrapper>();
     latest_index=-1;
     sended_index=-1;
-    pending_ack_index=-1;
     confirmed_index=-1;
   }
   public synchronized void confirmed(int confirmed_index){
@@ -40,19 +39,23 @@ public class SenderBuffer{
       sended_index=this.confirmed_index;
     }
   }
-  public synchronized void addACKJob(int pending_ack_index){
-    this.pending_ack_index=pending_ack_index;
+  public synchronized void addACKJob(String procID, int pending_ack_index){
+    ackMap.put(procID,pending_ack_index);
   }
   public synchronized void addSendJob(MessageWrapper m) throws SenderBufferOverflowException{
     if (this.confirmed_index+SenderBuffer.SENDING_BUFFER_SIZE>this.latest_index) {
       latest_index++;
       m.setIndex(latest_index);
-      buffer.put(latest_index,m);
+      DataWrapper data=new DataWrapper(m);
+      buffer.put(latest_index,data);
     }
     else{
       //Sender buffer overlow. 
       throw(new SenderBufferOverflowException(sended_index, confirmed_index, latest_index));
     }
+  }
+  public synchronized void addSendJob(Message m){
+    this.addSendJob(new MessageWrapper(m.toString()));
   }
   public synchronized DataWrapper getSendJob(){
     DataWrapper data=null;
@@ -72,33 +75,6 @@ public class SenderBuffer{
         m.setDataWrapper(data);
         m.setPackedSize(1);
       }
-
-//no packing for HW2, ruin the timing
-/*
-      if (m.isPacked()){
-//	System.out.printf("Used packed for [%d]..[%d]\n",sended_index+1,sended_index+m.getPackedSize());
-        data=m.getDataWrapper();
-	sended_index+=m.getPackedSize();
-      }
-      else{ //try to pack data.
-        data=new DataWrapper(m);
-        sended_index++;
-        packedSize++;
-        boolean flag=true;
-        while((sended_index<latest_index) && (flag)){
-          MessageWrapper mNext=buffer.get(sended_index+1);
-          if (data.appendMessage(mNext)){
-            sended_index++;
-	    packedSize++;
-          }
-          else{
-            flag=false;
-          }
-        }
-	m.setDataWrapper(data);
-	m.setPackedSize(packedSize);
-      }
-*/
     }
     if (pending_ack_index!=-1){
       if (data==null){
