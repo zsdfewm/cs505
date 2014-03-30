@@ -34,7 +34,7 @@ public class Message{
   }
   public String toString(){
     String retval;
-    retval=Integer.toString(messageNumber)+" "+processID+" "+contents+" "+killList.size();
+    retval=Integer.toString(messageNumber)+"$$$"+processID+"$$$"+contents+"$$$"+killList.size();
     if (killList.size()!=0){
       for(int i=0;i<killList.size();i++){
         retval=retval+" "+killList.elementAt(i);
@@ -49,7 +49,7 @@ public class Message{
   public Message(String s){
     String[] tmp;
     String vtmp;
-    tmp=s.split(" ",4);
+    tmp=s.split("$$$",4);
     this.messageNumber=Integer.parseInt(tmp[0]);
     this.processID=tmp[1];
     this.contents=tmp[2];
