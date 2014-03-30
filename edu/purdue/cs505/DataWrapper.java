@@ -13,7 +13,9 @@ public class DataWrapper{
   public static final int UDP_DATA_SIZE=60000;
   public byte[] data;
   public int length;
+  public int message_begin;
   public int ACKindex;
+  public String procID;
   private byte[] int_to_bb(int myInteger){
     return ByteBuffer.allocate(4).order(ByteOrder.LITTLE_ENDIAN).putInt(myInteger).array();
   }
@@ -62,18 +64,28 @@ public class DataWrapper{
     return this.ACKindex;
   }
 
+
+//For procID;
+  public void setProcID(String procID){
+    byte[] tmp;
+    tmp=this.int_to_bb(procID.length());
+    this.copyTmpToData(8,tmp);
+    tmp=procID.getBytes();
+    this.copyTmpToData(12,tmp);
+    this.message_begin=8+4+procID.length();
+  }
 //For message
   public void setMessage(MessageWrapper m){
     byte[] tmp;
     tmp=this.int_to_bb(m.getIndex());
-    this.copyTmpToData(8,tmp);
+    this.copyTmpToData(this.message_begin,tmp);
     tmp=this.int_to_bb(m.getMsgLength());
-    this.copyTmpToData(12,tmp);
+    this.copyTmpToData(this.message_begin+4,tmp);
     tmp=m.getMessageContents().getBytes();
-    this.copyTmpToData(16,tmp);
+    this.copyTmpToData(this.message_begin+8,tmp);
   }
   public boolean hasMessage(){
-    if (this.length>8){
+    if (this.length>this.message_begin){
       return true;
     }
     return false;
@@ -82,30 +94,32 @@ public class DataWrapper{
     int msgIndex;
     int msgLength;
     byte[] tmp=new byte[4];
-    this.copyDataToTmp(8,tmp);
+    this.copyDataToTmp(this.message_begin,tmp);
     msgIndex=this.bb_to_int(tmp);
-    this.copyDataToTmp(12,tmp);
+    this.copyDataToTmp(this.message_begin+4,tmp);
     msgLength=this.bb_to_int(tmp);
     tmp=new byte[msgLength];
-    this.copyDataToTmp(16,tmp);
+    this.copyDataToTmp(this.message_begin+8,tmp);
     MessageWrapper m=new MessageWrapper(new String(tmp));
     m.setIndex(msgIndex);
     return m;
   }
 
-  public DataWrapper(){
+  public DataWrapper(String myID){
 //A empty data for ack
-    this.setLength(8);
+    this.setLength(8+4+myID.length());
     this.setACK(-1);
+    this.setProcID(myID);
   }
-  public DataWrapper(MessageWrapper m){
+  public DataWrapper(String myID, MessageWrapper m){
 //A message packet
-    this.setLength(8+m.getLength());
+    this.setLength(8+4+myID.length()+m.getLength());
     this.setACK(-1);
+    this.setProcID(myID);
     this.setMessage(m);
   }
   public DataWrapper(byte[] data){
-//recver call it. set data, get message;
+//recver call it. set data, get procID and get message_begin
     int tmpInt;
     byte[] tmp=new byte[4];
 //data length
@@ -120,24 +134,18 @@ public class DataWrapper{
     this.copyDataToTmp(4,tmp);
     tmpInt=this.bb_to_int(tmp);
     this.ACKindex=tmpInt;
+//Get ProcID;
+    this.copyDataToTmp(8,tmp);
+    tmpInt=this.bb_to_int(tmp);
+    tmp=new byte[tmpInt];
+    this.copyDataToTmp(12,tmp);
+    this.procID=new String(tmp);
+    this.message_begin=12+tmpInt;
+  }
+  public String getProcID(){
+    return this.procID;
   }
 
   public static void main(String args[]){
-    MessageWrapper m=new MessageWrapper("aaaaaaaaaaaaaaaaaaaaaa",1);
-    DataWrapper data=new DataWrapper(m);
-    data.printData();
-    m=new MessageWrapper("bbbbbbbbbbbbbbbbbbbbb",2);
-    if (data.appendMessage(m)){
-      System.out.println("Append success!");
-    }
-    else{
-      System.out.println("Append Fails");
-    }
-    data.printData();
-    MessageWrapper[] mArray;
-    mArray=data.extractMessage();
-    for(int i=0;i<mArray.length;i++){
-      System.out.println(mArray[i].getMessageContents());
-    }
   }  
 }

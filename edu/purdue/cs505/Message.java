@@ -30,9 +30,9 @@ public class Message{
   public Message(){
   }
   public Message(String s){
-    String[] tmp[];
+    String[] tmp;
     tmp=s.split(" ",3);
-    this.messageNumer=Integer.parseInt(tmp[0]);
+    this.messageNumber=Integer.parseInt(tmp[0]);
     this.processID=tmp[1];
     this.contents=tmp[2];
   }

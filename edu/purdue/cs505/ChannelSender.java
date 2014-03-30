@@ -6,30 +6,23 @@ import java.util.*;
 
 
 public class ChannelSender{
-  public String myName;
-  public SenderBuffer senderBuffer;
-  public String targetIP;
-  public int targetPort;
-  public UDPSender udpSender;
-  public ChannelSender(String myName, String targetIP, int targetPort, SenderBuffer senderBuffer){
-    this.myName=myName;
-    this.targetIP=targetIP;
-    this.targetPort=targetPort;
-    this.senderBuffer=senderBuffer;
-    this.udpSender=new UDPSender(myName,targetIP, targetPort,senderBuffer);
+  public String myID;
+  public HashMap<String, ReliableBuffer> channelMap;
+  public ChannelSender(String myID, HashMap<String, ReliableBuffer> channelMap){
+    this.myID=myID;
+    this.channelMap=channelMap;
   }
-  public void sendMsg(MessageWrapper m) throws SenderBufferOverflowException{
-    senderBuffer.addSendJob(m);
+  public void sendMessageWrapper(String destID, MessageWrapper m) throws SenderBufferOverflowException{
+    ReliableBuffer rb=channelMap.get(destID);
+    rb.addSendJob(m);
   }
-  public void sendString(String s) throws SenderBufferOverflowException {
+  public void sendString(String destID,String s) throws SenderBufferOverflowException {
     MessageWrapper m=new MessageWrapper(s);
-    this.sendMsg(m);
+    this.sendMessageWrapper(destID,m);
   }
-  public void begin(){
-    new Thread(udpSender).start();
-  }
-  public void halt(){
-    udpSender.halt();
+  public void sendMessage(String destID, Message m) throws SenderBufferOverflowException{
+    MessageWrapper mw=new MessageWrapper(m.toString());
+    this.sendMessageWrapper(destID,mw);
   }
 }
 
