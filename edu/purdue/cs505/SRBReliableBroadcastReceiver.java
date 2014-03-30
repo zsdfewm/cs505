@@ -40,6 +40,7 @@ public class SRBReliableBroadcastReceiver extends ReliableBroadcastReceiver impl
   public void rreceive(ChannelMessage mw){
     Message m;
     m=new Message(mw.getMessageContents());
+System.out.println(mw.getMessageContents());
     this.breceive(m);
   }
   public synchronized void addMessage(TreeMap<Integer, Message> map, int index, Message m){
