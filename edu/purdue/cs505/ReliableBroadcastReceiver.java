@@ -8,6 +8,8 @@ public class ReliableBroadcastReceiver implements ReliableChannelReceiver{
   public BroadcastReceiver br;
   public ChannelSender sender;
   public HashMap<String, HashSet<Integer>> indexMap;
+  public ReliableBroadcastReceiver(){
+  }
   public ReliableBroadcastReceiver(String myID, ChannelSender sender, BroadcastReceiver br, HashMap<String, ReliableBuffer> map){
     indexMap=new HashMap<String, HashSet<Integer>>();
     Set<String> procIDs=map.keySet();
@@ -25,6 +27,9 @@ public class ReliableBroadcastReceiver implements ReliableChannelReceiver{
   public void rreceive(ChannelMessage mw){
     Message m;
     m=new Message(mw.getMessageContents());
+    this.breceive(m);
+  }
+  public void breceive(Message m){
     if (m.getProcessID().equals(myID)){
 //My message for another guy, ignore it!
     }
