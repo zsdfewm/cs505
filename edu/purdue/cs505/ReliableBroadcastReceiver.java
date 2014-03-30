@@ -63,6 +63,6 @@ public class ReliableBroadcastReceiver implements ReliableChannelReceiver{
 if (this.br!=null){
   br.rdeliver(m);
 }
-System.out.println(myID+" delivers: "+m.getContents()+"<<from"+m.getProcessID()+"@"+m.getMessageNumber());
+//System.out.println(myID+" delivers: "+m.getContents()+"<<from"+m.getProcessID()+"@"+m.getMessageNumber());
   }
 }
