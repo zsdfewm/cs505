@@ -70,7 +70,7 @@ catch(Exception e){
 //      }
       this.sendRound();
       try{
-        Thread.sleep(50);
+        Thread.sleep(5);
       }
       catch(Exception e){
         e.printStackTrace();

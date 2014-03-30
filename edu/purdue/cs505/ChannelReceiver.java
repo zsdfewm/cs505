@@ -37,18 +37,18 @@ public class ChannelReceiver implements Runnable{
 //randomly drop packages;*
     
     double drop=rand.nextDouble();
-    if (drop>0.30){
+    if (drop>0.90){
       System.out.println("Drops");
       return;
     }
 
 
     DataWrapper dataWrapper=new DataWrapper(data);
-    dataWrapper.printData();
+//    dataWrapper.printData();
     String procID=dataWrapper.getProcID();
     ReliableBuffer rb=channelMap.get(procID);
     int ACKindex=dataWrapper.getACK();
-    System.out.println("getACK: "+ACKindex);
+//    System.out.println("getACK: "+ACKindex);
     if (ACKindex!=-1){
       rb.confirmed(ACKindex);
     }

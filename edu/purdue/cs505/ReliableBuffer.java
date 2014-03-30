@@ -72,7 +72,7 @@ public class ReliableBuffer{
   public synchronized DataWrapper getSendJob(){
     DataWrapper data=null;
     if ((sended_index>=confirmed_index+ReliableBuffer.SENDING_WINDOW_SIZE) || (sended_index==latest_index)){
-System.out.println("Resend Lost Data");
+//System.out.println("Resend Lost Data");
       sended_index=confirmed_index;
     }
     if (sended_index<latest_index){
